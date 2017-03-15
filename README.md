@@ -26,6 +26,12 @@ public class NetInterceptor implements Interceptor {
         //分开键和值
         for (String param : params) {
             String[] keyvalue = param.split("=");
+	    //如果有键无值则添加值为""
+            if (keyvalue.length == 1) {
+                String key = keyvalue[0];
+                keyvalue = new String[]{key, ""};
+            }
+            if (keyvalue[1] != null)
             keyvalue[1] = URLDecoder.decode(keyvalue[1],"UTF-8");
             if (!"sign".equals(keyvalue[0]))
                 map.put(keyvalue[0], keyvalue[1]);
@@ -45,7 +51,7 @@ public class NetInterceptor implements Interceptor {
         paramNames.addAll(map.keySet());
         StringBuilder sb = new StringBuilder();
         for (String paramName : paramNames) {
-            sb.append(paramName).append("=").append(URLEncoder.encode((String) map.get(paramName), "UTF-8")).append("&");
+             sb.append(paramName).append("=").append(map.get(paramName) == null ? "" : URLEncoder.encode((String) map.get(paramName), "UTF-8")).append("&");
         }
         //拼签名
         sb.append("sign=" ).append(sign);
